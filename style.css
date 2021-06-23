@@ -1,0 +1,7 @@
+.edit-control {
+    display: none;
+}
+
+[mv-mode="edit"] .edit-control {
+    display: inherit;
+}
