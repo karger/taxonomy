@@ -16,7 +16,7 @@
 		<main>
 			<div mv-app="taxonomy"
 					 mv-firebase="auth"
-					 mv-plugins="firebase-firestore"
+					 mv-plugins="firebase-firestore tinymce"
 					 mv-autosave="1"
 					 mv-storage="firebase://mavo-cd7c3"
 					 mv-firebase-key="AIzaSyC0PxY82lVLTLv80ZU1z5sz1azoYZits0I"
@@ -31,7 +31,7 @@
 
 				<section mv-multiple property="category">
 					<h2 property="categoryName"></h2>
-					<div property="description"></div>
+					<div property="description" class="tinymce"></div>
 					<section mv-multiple property="dimension" mv-initial-items="0"> 
 					  <div style="display:none">
 							<meta property="id" mv-default="[generateId()]">
@@ -44,7 +44,7 @@
 							</div>
 							<h3><span property="dimensionName"></span> <button class="edit-control mv-drag-handle">≡</button> <button class="edit-control" mv-action="delete(dimension)">X</button></h3>
 							<h4>Description</h4>
-							<div property="description">
+							<div property="description" class="tinymce">
 							</div>
 							<h4>Options</h4>
 							<dl>
