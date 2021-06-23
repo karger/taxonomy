@@ -21,7 +21,7 @@
 					 mv-storage="firebase://mavo-cd7c3"
 					 mv-firebase-key="AIzaSyC0PxY82lVLTLv80ZU1z5sz1azoYZits0I"
 					 >
-				<div>
+				<div style="display:none">
 					<meta id="signal" property="signal" mv-storage="none">
 					<meta property="meid" mv-value="getUid(signal)">
 					<meta property="idCounter" mv-default="0">
@@ -32,23 +32,27 @@
 				<section mv-multiple property="category">
 					<h2 property="categoryName"></h2>
 					<div property="description"></div>
-					<section mv-multiple property="dimension" mv-initial-items="0">
-						<meta property="id" mv-default="[generateId()]">
-						<meta property="saving" mv-value="saveDimension(container,dimensionName,description,option,option.name,option.description)">
+					<section mv-multiple property="dimension" mv-initial-items="0"> 
+					  <div style="display:none">
+							<meta property="id" mv-default="[generateId()]">
+							<meta property="saving" mv-value="saveDimension(container,dimensionName,description,option,option.name,option.description)">
+					  </div>
 						<div property="container" id="dim[id]">
-							<meta property="id" mv-value="dimension.id">
-							<meta property="new" mv-default="true">
-							<h3 property="dimensionName">
-								<h4>Description</h4>
-								<div property="description">
+							<div style="display:none">
+								<meta property="id" mv-value="dimension.id">
+								<meta property="new" mv-default="true">
+							</div>
+							<h3><span property="dimensionName"></span> <button class="edit-control mv-drag-handle">≡</button> <button class="edit-control" mv-action="delete(dimension)">X</button></h3>
+							<h4>Description</h4>
+							<div property="description">
+							</div>
+							<h4>Options</h4>
+							<dl>
+								<div mv-multiple property="option">
+									<dt><span property="name"></span> <button class="edit-control mv-drag-handle">≡</button> <button class="edit-control" mv-action="delete(option)">X</button></dt>
+									<dd property="description"></dd>
 								</div>
-								<h4>Options</h4>
-								<dl>
-									<div mv-multiple property="option">
-										<dt property="name"></dt>
-										<dd property="description"></dd>
-									</div>
-								</dl>
+							</dl>
 						</div>
 					</section>
 				</section>
@@ -56,6 +60,6 @@
 			</div>
 
 		</main>
-		<footer>Created by David Karger.  <a href="mailto:karger@mit.edu">Please send feedback.</a></footer>
+
 	</body>
 </html>

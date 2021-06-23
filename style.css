@@ -3,5 +3,5 @@
 }
 
 [mv-mode="edit"] .edit-control {
-    display: inherit;
+    display: inline;
 }
