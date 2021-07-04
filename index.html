@@ -6,8 +6,8 @@
 		<title>Social Taxonomy Editor</title>
 		<link rel="stylesheet" href="https://get.mavo.io/stable/mavo.css">
 		<script src="https://get.mavo.io/stable/mavo.es5.js"></script>
-		<script src="mavo-helper.js"></script>
-		<script src="taxonomy.js"></script>
+		<script defer src="mavo-helper.js"></script>
+		<script defer src="taxonomy.js"></script>
 		<link href="style.css" rel="stylesheet">
 		<style>
 		</style>
@@ -29,24 +29,25 @@
 					[watchLoginState(meid)]
 				</div>
 
+				<h2>Dimensions</h2>
 				<section mv-multiple property="category">
-					<h2 property="categoryName"></h2>
+					<h3 property="categoryName"></h3>
 					<div property="description" class="tinymce"></div>
 					<section mv-multiple property="dimension" mv-initial-items="0"> 
 					  <div style="display:none">
 							<meta property="id" mv-default="[generateId()]">
-							<meta property="saving" mv-value="saveDimension(container,dimensionName,description,option,option.name,option.description)">
+<!--ask lea if changes to deep descendants trigger recalc of f(object) or only own properties-->
+							[saveItem(container,dimensionName,description,option,option.name,option.description)]
 					  </div>
-						<div property="container" id="dim[id]">
+						<div property="container" id="item[id]" mv-storage="none">
 							<div style="display:none">
 								<meta property="id" mv-value="dimension.id">
-								<meta property="new" mv-default="true">
 							</div>
-							<h3><span property="dimensionName"></span> <button class="edit-control mv-drag-handle">≡</button> <button class="edit-control" mv-action="delete(dimension)">X</button></h3>
-							<h4>Description</h4>
+							<h4><span property="dimensionName"></span> <button class="edit-control mv-drag-handle">≡</button> <button class="edit-control" mv-action="delete(dimension)">X</button></h4>
+							<h5>Description</h5>
 							<div property="description" class="tinymce">
 							</div>
-							<h4>Options</h4>
+							<h5>Options</h5>
 							<dl>
 								<div mv-multiple property="option">
 									<dt><span property="name"></span> <button class="edit-control mv-drag-handle">≡</button> <button class="edit-control" mv-action="delete(option)">X</button></dt>
@@ -57,6 +58,44 @@
 					</section>
 				</section>
 
+				<h2>Systems</h2>
+				<section mv-multiple property="system" mv-initial-items="0">
+					<div style="display:none">
+						<meta property="sysId" mv-default="[generateId()]">
+						[saveItem(container,container.dimensionValues.dimValues)]
+					</div>
+					<div property="container" id="item[id]" mv-storage="none">
+						<meta property="id" mv-value="sysId">
+						<h3><span property="systemName"></span> <button class="edit-control mv-drag-handle">≡</button> <button class="edit-control" mv-action="delete(system)">X</button></h3>
+						<details>
+							<summary>stored data hiding here</summary>
+							<div mv-multiple property="dimensionValues" mv-initial-items="0">
+							<span property="dimId"></span>
+							<span mv-multiple property="dimValues" mv-initial-items="0"></span>
+							</div>
+						</details>
+					</div>
+					<!--editing UI-->
+					<h4>Dimensions</h4>
+					<dl>
+						<div mv-multiple property="dimensionDisplay" mv-value="category.dimension.container" mv-storage="none">
+							<meta property="id">
+							<meta property="thisDimension" mv-value="first(filter(container.dimensionValues, container.dimensionValues.dimId=id))">
+							<meta property="existing" mv-value="has(id,container.dimensionValues.dimId)">
+							<dt>[dimensionName]<meta property="id"></dt>
+							<dd>
+								<span mv-if="existing" mv-multiple property="thisValue" mv-value="thisDimension.dimValues">
+									<button mv-action="delete(filter(first(filter(container.dimensionValues, container.dimensionValues.dimId=id)).dimValues, thisDimension.dimValues=thisValue))">X</button>
+								</span>
+								<select property="newValue">
+									<option mv-multiple mv-value="option.name"></option>
+								</select>
+								<button mv-action="if(existing,add(newValue,first(container.dimensionValues where dimId=id).dimValues),add(group(dimId:id,dimValues:list(newValue)),container.dimensionValues))">add</button>
+							</dd>
+						</div>
+					</dl>
+				</section>
+				
 			</div>
 
 		</main>

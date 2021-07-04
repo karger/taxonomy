@@ -1,6 +1,16 @@
 (function () {
-    var loaded={}
-    , db;
+    let loaded={}
+    , db
+	, render = function(item) {
+		let id=item.id
+		, elt = document.querySelector("#item"+id)
+		;
+		if (elt && typeof(id) != "undefined" && id != null) {
+			Mavo.Node.get(elt).render(item);
+			loaded[id]=true;
+		}
+	}
+	;
     
     generateId = function() {
 		var node = Mavo.Node.get(document.querySelector("[property='idCounter']"))
@@ -12,30 +22,37 @@
     firebaseReady.then(() => {
 		db = firebase.firestore().collection("mavo-apps").doc("taxonomy").collection("data");
 
-		db.onSnapshot((snapshot) => {
-			snapshot.docChanges().forEach(change => {
-				var doc = change.doc
-				, data = doc.data()
-				, id=data.id
-				, elt = document.querySelector("#"+id);
-				if (elt & !doc.metadata.hasPendingWrites) {
-					Mavo.Node.get(elt).render(data);
-					loaded[id]=true;
-				}
+		let makeWatcher = function() {		
+			return db.onSnapshot((snapshot) => {
+				snapshot.docChanges().forEach(change => {
+					var doc = change.doc;
+					if (!doc.metadata.hasPendingWrites) { //not a local edit being pushed
+						render(doc.data());
+					}
+				});
 			});
-	    });
-    });
-    
-    saveDimension = function(data) {
+		};
+
+		let unsubscribe = makeWatcher();
+		afterNap(() => {
+			unsubscribe();
+			unsubscribe=makeWatcher();
+		});
+	});
+	
+    saveItem = function(data) {
 		firebaseReady.then(() => {
-			var id = data.id;
-			if (loaded[id] || !!data.new) {
-				var elt = document.querySelector("#dim"+id);
-				if (elt) {
-					data = Mavo.Node.get(elt)?.getData(false);
-					data.new=false;
-					db.doc(""+id).set(data);
-				}
+			let id=data.id;
+			if (loaded[id]) {
+				data = JSON.parse(JSON.stringify(data))
+				db.doc(""+id).set(data)
+			} else {
+				db.doc(""+id).get().then((doc) => {
+					loaded[id]=true;
+					if (doc.exists) {
+						render(doc.data());
+					}
+				});
 			}
 		});
     }
