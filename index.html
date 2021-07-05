@@ -4,8 +4,8 @@
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width">
 		<title>Social Taxonomy Editor</title>
-		<link rel="stylesheet" href="https://get.mavo.io/stable/mavo.css">
-		<script src="https://get.mavo.io/stable/mavo.es5.js"></script>
+		<link rel="stylesheet" href="https://get.mavo.io/mavo.css">
+		<script src="https://get.mavo.io/mavo.es5.js"></script>
 		<script defer src="mavo-helper.js"></script>
 		<script defer src="taxonomy.js"></script>
 		<link href="style.css" rel="stylesheet">
@@ -88,7 +88,9 @@
 									<button mv-action="delete(filter(first(filter(container.dimensionValues, container.dimensionValues.dimId=id)).dimValues, thisDimension.dimValues=thisValue))">X</button>
 								</span>
 								<select property="newValue">
-									<option mv-multiple mv-value="option.name"></option>
+									<optgroup>
+										<option mv-multiple property="selectionValues" mv-value="option.name"></option>
+									</optgroup>
 								</select>
 								<button mv-action="if(existing,add(newValue,first(container.dimensionValues where dimId=id).dimValues),add(group(dimId:id,dimValues:list(newValue)),container.dimensionValues))">add</button>
 							</dd>
