@@ -29,76 +29,83 @@
 					[watchLoginState(meid)]
 				</div>
 
+				[taxonomy]
+				
 				<h2>Dimensions</h2>
-				<section mv-multiple property="category">
-					<h3 property="categoryName"></h3>
-					<div property="description" class="tinymce"></div>
-					<section mv-multiple property="dimension" mv-initial-items="0"> 
-					  <div style="display:none">
-							<meta property="id" mv-default="[generateId()]">
-<!--ask lea if changes to deep descendants trigger recalc of f(object) or only own properties-->
-							[saveItem(container,dimensionName,description,option,option.name,option.description)]
-					  </div>
-						<div property="container" id="item[id]" mv-storage="none">
+				<div mv-list="category">
+					<section mv-list-item property="category">
+						<h3 property="categoryName"></h3>
+						<div property="description" class="tinymce"></div>
+						<div mv-list="dimension" mv-initial-items="0">
+							<section mv-list-item> 
+								<div style="display:none">
+									<meta property="id" mv-default="[generateId()]">
+									<!--ask lea if changes to deep descendants trigger recalc of f(object) or only own properties-->
+									[saveItem(container,dimensionName,description,option,option.name,option.description)]
+								</div>
+								<div property="container" id="item[id]" mv-storage="none">
+									<div style="display:none">
+										<meta property="id" mv-value="dimension.id">
+									</div>
+									<h4><span property="dimensionName"></span> <button class="edit-control mv-drag-handle">≡</button> <button class="edit-control" mv-action="delete(dimension)">X</button></h4>
+									<h5>Description</h5>
+									<div property="description" class="tinymce">
+									</div>
+									<h5>Options</h5>
+									<dl mv-list="option">
+										<div mv-list-item>
+											<dt><span property="name"></span> <button class="edit-control mv-drag-handle">≡</button> <button class="edit-control" mv-action="delete(option)">X</button></dt>
+											<dd property="description"></dd>
+										</div>
+									</dl>
+								</div>
+							</section>
+					</section>
+					</div>
+					<h2>Systems</h2>
+					<div mv-list>
+						<section mv-list-item property="system" mv-initial-items="0">
 							<div style="display:none">
-								<meta property="id" mv-value="dimension.id">
+								<meta property="sysId" mv-default="[generateId()]">
+								[saveItem(container,container.dimensionValues.dimValues)]
 							</div>
-							<h4><span property="dimensionName"></span> <button class="edit-control mv-drag-handle">≡</button> <button class="edit-control" mv-action="delete(dimension)">X</button></h4>
-							<h5>Description</h5>
-							<div property="description" class="tinymce">
+							<div property="container" id="item[id]" mv-storage="none">
+								<meta property="id" mv-value="sysId">
+								<h3><span property="systemName"></span> <button class="edit-control mv-drag-handle">≡</button> <button class="edit-control" mv-action="delete(system)">X</button></h3>
+								<details>
+									<summary>stored data hiding here</summary>
+									<div mv-list="dimensionValues" mv-initial-items="0">
+										<div mv-list-item>
+											<span property="dimId"></span>
+											<div mv-list="dimValues"><span mv-list-item property="dimValues" mv-initial-items="0"></span></div>
+										</div>
+									</div>
+								</details>
 							</div>
-							<h5>Options</h5>
-							<dl>
-								<div mv-multiple property="option">
-									<dt><span property="name"></span> <button class="edit-control mv-drag-handle">≡</button> <button class="edit-control" mv-action="delete(option)">X</button></dt>
-									<dd property="description"></dd>
+							<!--editing UI-->
+							<h4>Dimensions</h4>
+							<dl mv-list="dimensionDisplay"  mv-value="category.dimension.container" mv-storage="none">
+								<div mv-list-item>
+									<meta property="id">
+									<meta property="thisDimension" mv-value="first(filter(container.dimensionValues, container.dimensionValues.dimId=id))">
+									<meta property="existing" mv-value="has(id,container.dimensionValues.dimId)">
+									<dt>[dimensionName]<meta property="id"></dt>
+									<dd>
+										<span  mv-if="existing" mv-list="thisValue" mv-value="thisDimension.dimValues"><span mv-list-item>
+											<button mv-action="delete(filter(first(filter(container.dimensionValues, container.dimensionValues.dimId=id)).dimValues, thisDimension.dimValues=thisValue))">X</button>
+										</span></span>
+										<select property="newValue">
+											<optgroup mv-list="selectionValues" mv-value="option.name">
+												<option mv-list-item></option>
+											</optgroup>
+										</select>
+										<button mv-action="if(existing,add(newValue,first(container.dimensionValues where dimId=id).dimValues),add(group(dimId:id,dimValues:list(newValue)),container.dimensionValues))">add</button>
+									</dd>
 								</div>
 							</dl>
-						</div>
-					</section>
-				</section>
-
-				<h2>Systems</h2>
-				<section mv-multiple property="system" mv-initial-items="0">
-					<div style="display:none">
-						<meta property="sysId" mv-default="[generateId()]">
-						[saveItem(container,container.dimensionValues.dimValues)]
+						</section>
 					</div>
-					<div property="container" id="item[id]" mv-storage="none">
-						<meta property="id" mv-value="sysId">
-						<h3><span property="systemName"></span> <button class="edit-control mv-drag-handle">≡</button> <button class="edit-control" mv-action="delete(system)">X</button></h3>
-						<details>
-							<summary>stored data hiding here</summary>
-							<div mv-multiple property="dimensionValues" mv-initial-items="0">
-							<span property="dimId"></span>
-							<span mv-multiple property="dimValues" mv-initial-items="0"></span>
-							</div>
-						</details>
-					</div>
-					<!--editing UI-->
-					<h4>Dimensions</h4>
-					<dl>
-						<div mv-multiple property="dimensionDisplay" mv-value="category.dimension.container" mv-storage="none">
-							<meta property="id">
-							<meta property="thisDimension" mv-value="first(filter(container.dimensionValues, container.dimensionValues.dimId=id))">
-							<meta property="existing" mv-value="has(id,container.dimensionValues.dimId)">
-							<dt>[dimensionName]<meta property="id"></dt>
-							<dd>
-								<span mv-if="existing" mv-multiple property="thisValue" mv-value="thisDimension.dimValues">
-									<button mv-action="delete(filter(first(filter(container.dimensionValues, container.dimensionValues.dimId=id)).dimValues, thisDimension.dimValues=thisValue))">X</button>
-								</span>
-								<select property="newValue">
-									<optgroup>
-										<option mv-multiple property="selectionValues" mv-value="option.name"></option>
-									</optgroup>
-								</select>
-								<button mv-action="if(existing,add(newValue,first(container.dimensionValues where dimId=id).dimValues),add(group(dimId:id,dimValues:list(newValue)),container.dimensionValues))">add</button>
-							</dd>
-						</div>
-					</dl>
-				</section>
-				
-			</div>
+				</div>
 
 		</main>
 
